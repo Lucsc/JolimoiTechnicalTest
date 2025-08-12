@@ -1,4 +1,5 @@
-Test technique réalisé par Luc Schmitt dans le cadre du processus de recrutement de Jolimoi,
+Test technique réalisé par Luc Schmitt dans le cadre du processus de recrutement de Jolimoi.
+
 Le projet est divisé en deux parties : 
   - Le back-end fait en Node.Js Express, trouvable dans le dossier backend
   - Le front-end fait en React Js, trouvable dans le dossier frontEnd
