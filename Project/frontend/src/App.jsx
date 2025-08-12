@@ -21,9 +21,8 @@ function App() {
         if (window.currentSSE) {
             window.currentSSE.close();
         }
-        
         const evtSource = new EventSource(`http://localhost:3000/convertToRoman/${number}`);
-        window.currentSSE = eventSource;
+        window.currentSSE = evtSource;
         
         evtSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -45,7 +44,7 @@ function App() {
     };
 
     return (
-        <div style={{ padding: "2rem" }}>
+        <div style={{ padding: "2rem", alignItems: "center", border: "1px solid black", width : "30%", margin: "auto", borderRadius: "10px", textAlign: "center", height : "100%"}}>
             <h1>Convert literal numbers to roman numbers</h1>
             <form onSubmit={handleSubmit}>
                 <input
