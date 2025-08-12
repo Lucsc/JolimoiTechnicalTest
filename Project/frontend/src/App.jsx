@@ -4,20 +4,49 @@ import axios from "axios";
 function App() {
     const [number, setNumber] = useState("");
     const [result, setResult] = useState("");
+    const [error, setError] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const res = await axios.get(`http://localhost:3000/convertToRoman/${number}`);
-            setResult(res.data.result);
-        } catch (err) {
-            setResult("Erreur: nombre invalide");
+        setResult("");
+        setError("");
+        
+        const nb = Number(number);
+        
+        if (isNaN(nb) || nb < 0 || nb > 100) {
+            setError("Number is invalid. Please enter a number between 0 and 100.");
+            return;
         }
+        
+        if (window.currentSSE) {
+            window.currentSSE.close();
+        }
+        
+        const evtSource = new EventSource(`http://localhost:3000/convertToRoman/${number}`);
+        window.currentSSE = eventSource;
+        
+        evtSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.error) {
+                setError(data.error);
+                evtSource.close();
+            } else if (data.result) {
+                setResult(data.result);
+                evtSource.close();
+            }
+        }
+        
+        evtSource.onerror = (e) => {
+            console.error("Error occurred in SSE:", e);
+            setError("An error occurred while fetching the result. Please try again.");
+            evtSource.close();
+        }
+        
     };
 
     return (
         <div style={{ padding: "2rem" }}>
-            <h1>Convertisseur Nombres → Romains</h1>
+            <h1>Convert literal numbers to roman numbers</h1>
             <form onSubmit={handleSubmit}>
                 <input
                     type="number"
@@ -25,10 +54,11 @@ function App() {
                     max="100"
                     value={number}
                     onChange={(e) => setNumber(e.target.value)}
+                    onInvalid={handleSubmit}
                 />
-                <button type="submit">Convertir</button>
+                <button type="submit">Convert</button>
             </form>
-            {result && <h2>Résultat : {result}</h2>}
+            {result && <h2>Result : {result}</h2>}
         </div>
     );
 }
