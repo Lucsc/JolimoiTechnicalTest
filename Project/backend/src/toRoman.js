@@ -10,7 +10,7 @@ function toRoman(num) {
         { value: 4, numeral: 'IV' },
         { value: 1, numeral: 'I' }
     ];
-
+    
     let result = '';
     for (const { value, numeral } of map) {
         while (num >= value) {
