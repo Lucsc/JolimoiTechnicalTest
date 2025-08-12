@@ -7,14 +7,25 @@ app.use(cors());
 
 app.get('/convertToRoman/:number', (req, res) => {
     const number = parseInt(req.params.number, 10);
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders?.();
+    
     if (isNaN(number) || number < 0 || number > 100) {
-        return res.status(400).json({ error: 'Number invalid, should be between 0 and 100' });
+        res.write(`data: ${JSON.stringify({ error: 'Number invalid, should be between 0 and 100' })}\n\n`);
+        return res.end();
     }
     if (number === 0) {
-        return res.json({ result : 'Zero is not represented in Roman numerals' });
+        res.write(`data: ${JSON.stringify({ result: 'Zero is not represented in Roman numerals' })}\n\n`);
+        return res.end();
     }
     const romanNumeral = toRoman(number);
-    res.json({ result: romanNumeral });
+    setTimeout(() => {
+        res.write(`data: ${JSON.stringify({ result: romanNumeral })}\n\n`);
+        res.end();
+    }, 1000);
 });
 
 const PORT = 3000;
